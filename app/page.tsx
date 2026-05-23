@@ -9,22 +9,28 @@ export default function Home() {
     setStatus('loading');
 
     try {
-      // Cách trigger x402 mạnh nhất hiện nay
       const response = await fetch('/api/premium', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.status === 402) {
-        // Redirect để x402 protocol trigger ví
-        window.location.href = '/api/premium';
+        // Cách trigger x402 tốt nhất hiện nay
+        const x402Header = response.headers.get('x402-payment-required');
+        
+        if (x402Header) {
+          console.log("x402 header detected");
+          // Trigger wallet bằng cách reload với header
+          window.location.reload(); // Hoặc dùng cách khác
+        }
+        
+        setStatus('idle');
         return;
       }
 
-      // Nếu đã thanh toán thành công
       if (response.ok) {
         const data = await response.json();
-        alert("✅ Thanh toán thành công!\n\n" + (data.content || "Nội dung premium đã mở."));
+        alert("✅ Thanh toán thành công!\nNội dung premium đã được mở.");
         setStatus('success');
       }
     } catch (err) {
@@ -51,7 +57,7 @@ export default function Home() {
           disabled={status === 'loading'}
           className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium disabled:opacity-50 transition"
         >
-          {status === 'loading' ? 'Đang mở ví...' : 'Mở khóa ngay bằng x402'}
+          {status === 'loading' ? 'Đang xử lý...' : 'Mở khóa ngay bằng x402'}
         </button>
       </div>
     </div>
