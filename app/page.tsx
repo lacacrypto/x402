@@ -9,20 +9,21 @@ export default function Home() {
     setStatus('loading');
 
     try {
-      const res = await fetch('/api/premium', { 
+      const response = await fetch('/api/premium', {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      if (res.status === 402) {
-        console.log("x402 triggered - Wallet should popup");
-        // Không alert, ví sẽ tự mở
+      if (response.status === 402) {
+        console.log("✅ x402 triggered - Wallet should popup now");
+        // Trigger lại để ví nhận diện
+        window.location.href = '/api/premium';
         setStatus('idle');
         return;
       }
 
-      if (res.ok) {
-        const data = await res.json();
+      if (response.ok) {
+        const data = await response.json();
         alert("Thanh toán thành công! Nội dung premium đã mở.");
         setStatus('success');
       }
