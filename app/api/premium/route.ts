@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  const payTo = process.env.PAY_TO;
+export async function GET() {
+  const payTo = process.env.PAY_TO || '';
   const price = process.env.DEFAULT_PRICE || '$0.1';
-  const chainId = 'eip155:8453'; // Base Mainnet
+  const chainId = 'eip155:8453';
 
   return new NextResponse(
-    JSON.stringify({ message: "Payment Required" }),
+    JSON.stringify({ message: "Payment required" }),
     {
       status: 402,
       headers: {
