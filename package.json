@@ -22,3 +22,6 @@
     "autoprefixer": "^10"
   }
 }
+"dependencies": {
+  "@x402/client": "^0.1.0"
+}
