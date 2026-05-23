@@ -14,23 +14,29 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
       });
 
+      // Xử lý x402
       if (response.status === 402) {
-        console.log("✅ x402 triggered - Wallet should popup now");
-        // Trigger lại để ví nhận diện
-        window.location.href = '/api/premium';
-        setStatus('idle');
-        return;
+        const paymentHeader = response.headers.get('x402-payment-required');
+        
+        if (paymentHeader) {
+          console.log("x402 header received - triggering wallet");
+          // Cách trigger mạnh hơn
+          window.location.href = '/api/premium';
+          return;
+        }
       }
 
+      // Nếu thành công (sau khi thanh toán)
       if (response.ok) {
         const data = await response.json();
-        alert("Thanh toán thành công! Nội dung premium đã mở.");
+        alert("✅ Thanh toán thành công!\n\n" + (data.content || "Nội dung premium đã mở."));
         setStatus('success');
       }
     } catch (err) {
       console.error(err);
       alert("Lỗi kết nối. Vui lòng thử lại.");
-      setStatus('error');
+    } finally {
+      setStatus('idle');
     }
   };
 
@@ -48,7 +54,7 @@ export default function Home() {
         <button
           onClick={unlockContent}
           disabled={status === 'loading'}
-          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium disabled:opacity-50"
+          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium disabled:opacity-50 transition"
         >
           {status === 'loading' ? 'Đang mở ví...' : 'Mở khóa ngay bằng x402'}
         </button>
