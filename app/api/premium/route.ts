@@ -7,19 +7,28 @@ export async function GET(request: NextRequest) {
 
   const chainId = network === 'base-sepolia' ? 'eip155:84532' : 'eip155:8453';
 
-  return new NextResponse(null, {
-    status: 402,
-    headers: {
-      'Content-Type': 'application/json',
-      'x402-payment-required': JSON.stringify({
-        accepts: [{
-          scheme: "exact",
-          price: price,
-          network: chainId,
-          payTo: payTo,
-          description: "Mở khóa nội dung premium",
-        }]
-      })
+  const paymentRequest = {
+    accepts: [{
+      scheme: "exact",
+      price: price,
+      network: chainId,
+      payTo: payTo,
+      description: "Mở khóa nội dung premium",
+      mimeType: "application/json"
+    }]
+  };
+
+  return new NextResponse(
+    JSON.stringify({
+      message: `Payment required: ${price}`,
+      x402: paymentRequest
+    }),
+    {
+      status: 402,
+      headers: {
+        'Content-Type': 'application/json',
+        'x402-payment-required': JSON.stringify(paymentRequest)
+      }
     }
-  });
+  );
 }
