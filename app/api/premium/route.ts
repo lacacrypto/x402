@@ -6,7 +6,10 @@ export async function GET() {
   const chainId = 'eip155:8453'; // Base Mainnet
 
   return new NextResponse(
-    JSON.stringify({ message: "Payment required" }),
+    JSON.stringify({
+      title: "Premium Content",
+      content: "Congratulations! You have successfully paid " + price + " USDC via x402.\n\nThis is special content for paid users only."
+    }),
     {
       status: 402,
       headers: {
