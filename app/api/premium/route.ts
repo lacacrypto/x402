@@ -1,33 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const payTo = process.env.PAY_TO;
   const price = process.env.DEFAULT_PRICE || '$0.1';
   const network = process.env.NETWORK || 'base';
 
   const chainId = network === 'base-sepolia' ? 'eip155:84532' : 'eip155:8453';
 
-  const paymentRequest = {
-    accepts: [{
-      scheme: "exact",
-      price: price,
-      network: chainId,
-      payTo: payTo,
-      description: "Mở khóa nội dung premium",
-      mimeType: "application/json"
-    }]
-  };
-
   return new NextResponse(
     JSON.stringify({
-      message: `Payment required: ${price}`,
-      x402: paymentRequest
+      title: "Noi dung Premium",
+      content: `Chuc mung! Ban da thanh toan ${price} USDC thanh cong qua x402.\n\nDay la noi dung dac biet chi nguoi tra phi moi xem duoc.`
     }),
     {
       status: 402,
       headers: {
         'Content-Type': 'application/json',
-        'x402-payment-required': JSON.stringify(paymentRequest)
+        'x402-payment-required': JSON.stringify({
+          accepts: [{
+            scheme: "exact",
+            price: price,
+            network: chainId,
+            payTo: payTo,
+            description: "Mo khoa noi dung premium",
+          }]
+        })
       }
     }
   );
