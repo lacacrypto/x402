@@ -3,10 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'x402 Payment Demo',
-  description: 'Thanh toán bằng USDC trên Base',
-  icons: {
-    icon: '/favicon.ico',
-  },
+  description: 'Thanh toán USDC trên Base',
 };
 
 export default function RootLayout({
@@ -16,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body className="bg-gray-950 text-white min-h-screen">
+        {children}
+      </body>
     </html>
   );
 }
