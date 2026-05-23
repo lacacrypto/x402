@@ -1,64 +1,28 @@
-'use client';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { useState } from 'react';
+export async function GET() {
+  const payTo = process.env.PAY_TO || '';
+  const price = process.env.DEFAULT_PRICE || '$0.1';
+  const chainId = 'eip155:8453'; // Base Mainnet
 
-export default function Home() {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const unlockContent = async () => {
-    setStatus('loading');
-
-    try {
-      const response = await fetch('/api/premium', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      // Xử lý x402
-      if (response.status === 402) {
-        const paymentHeader = response.headers.get('x402-payment-required');
-        
-        if (paymentHeader) {
-          console.log("x402 header received - triggering wallet");
-          // Cách trigger mạnh hơn
-          window.location.href = '/api/premium';
-          return;
-        }
+  return new NextResponse(
+    JSON.stringify({ 
+      message: "Payment required" 
+    }),
+    {
+      status: 402,
+      headers: {
+        'Content-Type': 'application/json',
+        'x402-payment-required': JSON.stringify({
+          accepts: [{
+            scheme: "exact",
+            price: price,
+            network: chainId,
+            payTo: payTo,
+            description: "Unlock premium content",
+          }]
+        })
       }
-
-      // Nếu thành công (sau khi thanh toán)
-      if (response.ok) {
-        const data = await response.json();
-        alert("✅ Thanh toán thành công!\n\n" + (data.content || "Nội dung premium đã mở."));
-        setStatus('success');
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi kết nối. Vui lòng thử lại.");
-    } finally {
-      setStatus('idle');
     }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-gray-900 rounded-3xl p-10 text-center border border-gray-700">
-        <h1 className="text-4xl font-bold mb-2">🔐 x402 Payment</h1>
-        <p className="text-gray-400 mb-8">Thanh toán USDC trên Base</p>
-
-        <div className="bg-gray-800 rounded-2xl p-6 mb-8">
-          <p className="text-gray-400">Nội dung Premium</p>
-          <p className="text-4xl font-bold text-green-400 mt-1">$0.1 USDC</p>
-        </div>
-
-        <button
-          onClick={unlockContent}
-          disabled={status === 'loading'}
-          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium disabled:opacity-50 transition"
-        >
-          {status === 'loading' ? 'Đang mở ví...' : 'Mở khóa ngay bằng x402'}
-        </button>
-      </div>
-    </div>
   );
 }
