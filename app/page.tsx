@@ -9,24 +9,19 @@ export default function Home() {
     setStatus('loading');
 
     try {
+      // Cách trigger x402 mạnh nhất hiện nay
       const response = await fetch('/api/premium', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
 
-      // Xử lý x402
       if (response.status === 402) {
-        const paymentHeader = response.headers.get('x402-payment-required');
-        
-        if (paymentHeader) {
-          console.log("x402 header received - triggering wallet");
-          // Cách trigger mạnh hơn
-          window.location.href = '/api/premium';
-          return;
-        }
+        // Redirect để x402 protocol trigger ví
+        window.location.href = '/api/premium';
+        return;
       }
 
-      // Nếu thành công (sau khi thanh toán)
+      // Nếu đã thanh toán thành công
       if (response.ok) {
         const data = await response.json();
         alert("✅ Thanh toán thành công!\n\n" + (data.content || "Nội dung premium đã mở."));
