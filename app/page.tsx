@@ -5,8 +5,9 @@ import { useState } from 'react';
 export default function Home() {
   const [status, setStatus] = useState('idle');
 
-  const unlockContent = async () => {
+  const unlockContent = () => {
     setStatus('loading');
+    // Cách trigger x402 mạnh nhất hiện nay
     window.location.href = '/api/premium';
   };
 
@@ -23,9 +24,10 @@ export default function Home() {
 
         <button
           onClick={unlockContent}
-          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium"
+          disabled={status === 'loading'}
+          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium disabled:opacity-50"
         >
-          Mở khóa ngay bằng x402
+          {status === 'loading' ? 'Đang mở ví...' : 'Mở khóa ngay bằng x402'}
         </button>
       </div>
     </div>
