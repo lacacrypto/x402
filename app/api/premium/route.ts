@@ -15,7 +15,7 @@ export async function GET() {
             price: "$0.1",
             network: "eip155:8453",
             payTo: payTo,
-            description: "Mở khóa nội dung premium"
+            description: "Unlock premium content"
           }]
         })
       }
