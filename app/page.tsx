@@ -3,12 +3,33 @@
 import { useState } from 'react';
 
 export default function Home() {
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState<'idle' | 'loading'>('idle');
 
-  const unlockContent = () => {
+  const unlockContent = async () => {
     setStatus('loading');
-    // Trigger mạnh nhất cho x402
-    window.location.href = '/api/premium';
+
+    try {
+      const res = await fetch('/api/premium', { 
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (res.status === 402) {
+        console.log("x402 header detected → Mở ví");
+        // Trigger mạnh nhất
+        window.location.href = '/api/premium';
+        return;
+      }
+
+      if (res.ok) {
+        alert("✅ Thanh toán thành công!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối");
+    } finally {
+      setStatus('idle');
+    }
   };
 
   return (
