@@ -7,7 +7,7 @@ export default function Home() {
 
   const unlockContent = () => {
     setStatus('loading');
-    // Cách trigger x402 mạnh nhất hiện nay
+    // Trigger mạnh nhất cho x402
     window.location.href = '/api/premium';
   };
 
