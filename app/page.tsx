@@ -3,42 +3,11 @@
 import { useState } from 'react';
 
 export default function Home() {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState('idle');
 
   const unlockContent = async () => {
     setStatus('loading');
-
-    try {
-      const response = await fetch('/api/premium', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (response.status === 402) {
-        // Cách trigger x402 tốt nhất hiện nay
-        const x402Header = response.headers.get('x402-payment-required');
-        
-        if (x402Header) {
-          console.log("x402 header detected");
-          // Trigger wallet bằng cách reload với header
-          window.location.reload(); // Hoặc dùng cách khác
-        }
-        
-        setStatus('idle');
-        return;
-      }
-
-      if (response.ok) {
-        const data = await response.json();
-        alert("✅ Thanh toán thành công!\nNội dung premium đã được mở.");
-        setStatus('success');
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi kết nối. Vui lòng thử lại.");
-    } finally {
-      setStatus('idle');
-    }
+    window.location.href = '/api/premium';
   };
 
   return (
@@ -46,7 +15,7 @@ export default function Home() {
       <div className="max-w-md w-full bg-gray-900 rounded-3xl p-10 text-center border border-gray-700">
         <h1 className="text-4xl font-bold mb-2">🔐 x402 Payment</h1>
         <p className="text-gray-400 mb-8">Thanh toán USDC trên Base</p>
-
+        
         <div className="bg-gray-800 rounded-2xl p-6 mb-8">
           <p className="text-gray-400">Nội dung Premium</p>
           <p className="text-4xl font-bold text-green-400 mt-1">$0.1 USDC</p>
@@ -54,10 +23,9 @@ export default function Home() {
 
         <button
           onClick={unlockContent}
-          disabled={status === 'loading'}
-          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium disabled:opacity-50 transition"
+          className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-2xl text-xl font-medium"
         >
-          {status === 'loading' ? 'Đang xử lý...' : 'Mở khóa ngay bằng x402'}
+          Mở khóa ngay bằng x402
         </button>
       </div>
     </div>
